@@ -45,6 +45,7 @@ import org.pitest.util.IsolationUtils;
 import org.pitest.util.Log;
 import org.pitest.util.MemoryWatchdog;
 import org.pitest.util.SafeDataInputStream;
+import org.pitest.util.SystemUtil;
 
 public class MutationTestMinion {
 
@@ -110,7 +111,14 @@ public class MutationTestMinion {
       addMemoryWatchDog(reporter);
 
       final MutationTestMinion instance = new MutationTestMinion(dis, reporter);
-      instance.run();
+
+      SystemUtil.runWithExitForbidden(new Runnable() {
+        @Override
+        public void run() {
+          instance.run();
+        }
+      });
+
     } catch (final UnknownHostException ex) {
       LOG.log(Level.WARNING, "Error during mutation test", ex);
     } catch (final IOException ex) {
