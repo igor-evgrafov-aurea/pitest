@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.pitest.boot.HotSwapAgent;
 import org.pitest.classinfo.ClassName;
 import org.pitest.classpath.ClassPathByteArraySource;
@@ -38,7 +37,7 @@ import org.pitest.testapi.execute.FindTestUnits;
 import org.pitest.util.ExitCode;
 import org.pitest.util.Log;
 import org.pitest.util.SafeDataInputStream;
-
+import org.pitest.util.SystemUtil;
 import sun.pitest.CodeCoverageStore;
 
 public class CoverageMinion {
@@ -82,7 +81,12 @@ public class CoverageMinion {
 
       final CoverageWorker worker = new CoverageWorker(invokeQueue, tus);
 
-      worker.run();
+      SystemUtil.runWithExitForbidden(new Runnable() {
+        @Override
+        public void run() {
+          worker.run();
+        }
+      });
 
     } catch (final PitHelpError phe) {
       LOG.log(Level.SEVERE, phe.getMessage());
