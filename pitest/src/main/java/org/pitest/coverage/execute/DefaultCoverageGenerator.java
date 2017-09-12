@@ -182,7 +182,11 @@ public class DefaultCoverageGenerator implements CoverageGenerator {
 
             @Override
             public void apply(final CoverageResult cr) {
-                coverage.calculateClassCoverage(cr);
+                if (cr.isGreenTest()) {
+                    coverage.calculateClassCoverage(cr);
+                } else {
+                    LOG.info(cr.getTestUnitDescription() + " did not pass without mutation.");
+                }
                 if (DefaultCoverageGenerator.this.showProgress) {
                     System.out.printf("%s", this.spinner[this.i % this.spinner.length]);
                 }
